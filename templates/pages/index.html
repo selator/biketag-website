@@ -21,6 +21,8 @@
 	</script>
 
 	<title>BIKE TAG</title>
+	<meta name="description"
+		content="BikeTag.org is a place for people to see the most recent Bike Tags in their city and participate in the game in an easy and simple way, without needing to login to anything." />
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta http-equiv="X-UA-Compatible" content="IE=9;IE=10;IE=Edge,chrome=1" />
@@ -85,6 +87,7 @@
 			<!-- Intro -->
 			<article id="tagit">
 				<form id="uploadForm">
+					<div id="map"></div>
 					<div class="field half first">
 						<h3 id="proofHeading">Proof Information</h3>
 						<label for="currentTag">Image proof you found the mystery location</label>
@@ -466,15 +469,18 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 	<script>
 	</script>
 	<!-- Scripts -->
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/uglipop.min.js"></script>
-	<script src="assets/js/browser.min.js"></script>
-	<script src="assets/js/breakpoints.min.js"></script>
-	<script src="assets/js/util.js"></script>
-	<script src="assets/js/main.js"></script>
-	<script src="assets/js/imgurIntegration.js"></script>
-	<script src="assets/js/redditIntegration.js"></script>
-	<script src="assets/js/smtp.js"></script>
+	<script async defer src="assets/js/jquery.min.js"></script>
+	<script async defer src="assets/js/uglipop.min.js"></script>
+	<script async defer src="assets/js/browser.min.js"></script>
+	<script async defer src="assets/js/breakpoints.min.js"></script>
+	<script async defer src="assets/js/util.js"></script>
+	<script async defer src="assets/js/main.js"></script>
+	<script async defer src="assets/js/imgurIntegration.js"></script>
+	<script async defer src="assets/js/redditIntegration.js"></script>
+	<script async defer src="assets/js/smtp.js"></script>
+	<script async defer src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt7CC2GcoRMO6l28hl4ukkpnNskgzg0d4">
+	</script>
 	<!-- <script src="assets/js/biketag.js"></script> -->
 
 	<!-- For local development hotloading -->

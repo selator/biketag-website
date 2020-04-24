@@ -497,9 +497,83 @@
 			);
 		},
 
-		onUploadFormSubmit(theButton) {
-			theButton.replaceWith('<i class="fa fa-spinner fa-spin" style="font-size:24px"></i>');
+		getExif(file) {
+			var data = []
 
+			return EXIF.readFromBinaryFile(file)
+		},
+
+		getGPSCoordinates(exifdata) {
+			function ConvertDMSToDD(degrees, minutes, seconds, direction) {
+
+				var dd = degrees + (minutes / 60) + (seconds / 3600);
+
+				if (direction == "S" || direction == "W") {
+					dd = dd * -1;
+				}
+
+				return dd;
+			}
+
+			// Calculate latitude decimal
+			var latDegree = exifdata.GPSLatitude[0].numerator;
+			var latMinute = exifdata.GPSLatitude[1].numerator;
+			var latSecond = exifdata.GPSLatitude[2].numerator;
+			var latDirection = exifdata.GPSLatitudeRef;
+
+			var latitude = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);
+			console.log(latitude);
+
+			// Calculate longitude decimal
+			var lonDegree = exifdata.GPSLongitude[0].numerator;
+			var lonMinute = exifdata.GPSLongitude[1].numerator;
+			var lonSecond = exifdata.GPSLongitude[2].numerator;
+			var lonDirection = exifdata.GPSLongitudeRef;
+
+			var longitude = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
+			console.log(longitude);
+
+			return {
+				latitude,
+				longitude,
+			}
+		},
+
+		showGPSOnMap(latitude, longitude) {
+			var map = new google.maps.Map(document.getElementById('map'), {
+				center: {
+					lat: latitude,
+					lng: longitude,
+				},
+				zoom: 8
+			});
+
+
+			// // Try HTML5 geolocation.
+			// if (navigator.geolocation) {
+			// 	navigator.geolocation.getCurrentPosition(function (position) {
+			// 		var pos = {
+			// 			lat: position.coords.latitude,
+			// 			lng: position.coords.longitude
+			// 		};
+
+			// 		infoWindow.setPosition(pos);
+			// 		infoWindow.setContent('Location found.');
+			// 		infoWindow.open(map);
+			// 		map.setCenter(pos);
+			// 	}, function () {
+			// 		handleLocationError(true, infoWindow, map.getCenter());
+			// 	});
+			// } else {
+			// 	// Browser doesn't support Geolocation
+			// 	handleLocationError(false, infoWindow, map.getCenter());
+			// }
+		},
+
+		onUploadFormSubmit(theButton) {
+			// theButton.replaceWith('<i class="fa fa-spinner fa-spin" style="font-size:24px"></i>');
+
+			var self = this
 			var form = $('#uploadForm');
 			var fileInputs = form.find('input[type="file"]');
 			var files = [],
@@ -524,6 +598,17 @@
 						return false;
 					}
 
+
+					var reader = new FileReader();
+					reader.onload = function () {
+						var metadata = self.getExif(this.result)
+						if (metadata.GPSLatitude && metadata.GPSLongitude) {
+							var gps = self.getGPSCoordinates(metadata)
+							self.showGPSOnMap(gps.latitude, gps.longitude)
+						}
+					}
+					reader.readAsArrayBuffer($files[0])
+
 					files.push($files[0]);
 				} else {
 					console.log('I need both files!');
@@ -536,19 +621,21 @@
 			var image1Description = '#' + currentTagInfo.currentTagNumber + ' proof' + locationString + ' by ' + user;
 			var image2Description = '#' + currentTagInfo.nextTagNumber + ' tag' + hintString + ' by ' + user;
 
-			this.uploadImageToImgur(files[0], image1Description, function () {
-				this.uploadImageToImgur(files[1], image2Description, function () {
+			// console.log(this.getExif())
 
-					this.adminEmailAddresses.forEach(function (emailAddress) {
-						const subject = "New Bike Tag Post (#" + currentTagInfo.nextTagNumber + ")"
-						const body = "Hello BikeTag Admin, A new post has been created!\r\nYou are getting this email because you are listed as an admin on the site (" + window.location + "). Reply to this email to request to be removed from this admin list."
-						this.sendNotificationEmail(emailAddress, subject, body)
-					}.bind(this))
+			// this.uploadImageToImgur(files[0], image1Description, function () {
+			// 	this.uploadImageToImgur(files[1], image2Description, function () {
 
-					window.location.href = window.location.pathname + '?uploadSuccess=true';
+			// 		this.adminEmailAddresses.forEach(function (emailAddress) {
+			// 			const subject = "New Bike Tag Post (#" + currentTagInfo.nextTagNumber + ")"
+			// 			const body = "Hello BikeTag Admin, A new post has been created!\r\nYou are getting this email because you are listed as an admin on the site (" + window.location + "). Reply to this email to request to be removed from this admin list."
+			// 			this.sendNotificationEmail(emailAddress, subject, body)
+			// 		}.bind(this))
 
-				}.bind(this));
-			}.bind(this));
+			// 		window.location.href = window.location.pathname + '?uploadSuccess=true';
+
+			// 	}.bind(this));
+			// }.bind(this));
 		},
 
 		init: function () {

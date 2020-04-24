@@ -277,8 +277,8 @@
 				return;
 
 			// Add state?
-			if (typeof addState != 'undefined'
-				&& addState === true)
+			if (typeof addState != 'undefined' &&
+				addState === true)
 				history.pushState(null, null, '#');
 
 			// Handle lock.
@@ -409,8 +409,8 @@
 
 		$window.on('hashchange', function (event) {
 			// Empty hash?
-			if (location.hash == ''
-				|| location.hash == '#') {
+			if (location.hash == '' ||
+				location.hash == '#') {
 
 				// Prevent default.
 				event.preventDefault();
@@ -471,8 +471,8 @@
 		$main_articles.hide();
 
 		// Initial article.
-		if (location.hash != ''
-			&& location.hash != '#')
+		if (location.hash != '' &&
+			location.hash != '#')
 			$window.on('load', function () {
 				$main._show(location.hash.substr(1), true);
 			});
